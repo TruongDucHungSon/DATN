@@ -27,6 +27,7 @@ import { MENU_LIST, SALE } from '../constants';
 import CustomImage from '@/compound/customImage/CustomImage';
 import useNoScrollBody from '@/custom-hook/useNoScrollBody';
 import { useUserDetailQuery } from '@/query/user/handleApiUser';
+import Logo from '@/compound/logo/Logo';
 
 interface IPropsSale {
 	id?: number;
@@ -82,16 +83,7 @@ const HeaderMobile = ({ handleRedirectToFavoritePage }: IPropsSale) => {
 						onClick={handleOpenNav}
 					/>
 				</div>
-				<div style={{ width: 60, height: 40 }}>
-					<Link href={ROUTER.HOME}>
-						<CustomImage
-							width={80}
-							height={60}
-							src={LogoSrc.src}
-							alt="Logo-SpeedTour"
-						/>
-					</Link>
-				</div>
+				<Logo />
 				<div className="actions">
 					<CgSearch size={22} />
 					<VscBell
@@ -139,16 +131,7 @@ const HeaderMobile = ({ handleRedirectToFavoritePage }: IPropsSale) => {
 					className={`wrapper-mobile  ${openNav ? 'show-nav' : 'hidden-nav'}`}
 				>
 					<div className="top">
-						<div style={{ width: 80, height: 60 }}>
-							<Link href={ROUTER.HOME}>
-								<CustomImage
-									width={80}
-									height={60}
-									src={LogoSrc.src}
-									alt="Logo-SpeedTour"
-								/>
-							</Link>
-						</div>
+						<Logo />
 						<GrFormClose
 							size={28}
 							onClick={handleCloseNav}

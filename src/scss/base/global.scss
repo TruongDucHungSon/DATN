@@ -6,6 +6,17 @@
 	padding-inline: 20px;
 }
 
+.logo-link {
+	padding: 8px 12px;
+	background: #c41320;
+	font-size: 14px;
+	line-height: 24px;
+	font-weight: 500;
+	width: max-content;
+	color: white;
+	font-family: $heading-font;
+}
+
 img {
 	height: 100%;
 	object-fit: cover;

@@ -34,6 +34,7 @@ import { MENU_LIST, SALE } from '../constants';
 // hooks
 import CustomImage from '@/compound/customImage/CustomImage';
 import { useDebounce } from '@/containers/products/hooks';
+import Logo from '@/compound/logo/Logo';
 
 interface IPropsSale {
 	id: number;
@@ -164,16 +165,7 @@ export const Header = () => {
 						</div>
 					</div>
 
-					<div style={{ width: 80, height: 60 }}>
-						<Link href={ROUTER.HOME}>
-							<CustomImage
-								width={80}
-								height={60}
-								src={LogoSrc.src}
-								alt="Logo-SpeedTour"
-							/>
-						</Link>
-					</div>
+					<Logo />
 
 					<div className="search-site">
 						<div className="field">
@@ -216,7 +208,7 @@ export const Header = () => {
 										size={24}
 									/>
 								</Link>
-								<p>{itemBagCart.length || '0'}</p>
+								<p>{itemBagCart?.length || '0'}</p>
 							</div>
 						</div>
 					</div>
