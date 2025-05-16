@@ -1,8 +1,6 @@
 'use client';
 
-// base
-import { useEffect, useRef, useState } from 'react';
-
+import { useEffect, useRef, useState, useCallback } from 'react';
 // components
 import Button from '@/compound/demo-button/button/Button';
 import FormInput from '@/compound/formInput/FormInput';
@@ -15,7 +13,6 @@ import { selectIsToggleModalLogin } from '@/redux/modal/selector';
 import { closeModalLogin, openModalRegister } from '@/redux/modal/slice';
 // custom-hook
 import useNoScrollBody from '@/custom-hook/useNoScrollBody';
-
 // react-hook-form
 import { useForm } from 'react-hook-form';
 // react-query
@@ -23,7 +20,9 @@ import { useLoginMutation } from '@/query/authentication/authentication';
 // Yup
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+// notification
 import ModalNotification from '../notification/Notification';
+
 const schema = yup.object().shape({
 	email: yup.string().email('Invalid email format').required('Email is required'),
 	password: yup.string().required('Password is required'),
@@ -33,24 +32,36 @@ interface ILoginProps {
 	email: string;
 	password: string;
 }
+
 const Login = () => {
 	// state notification
 	const [modalVisible, setModalVisible] = useState(true);
 	const [modalMessage, setModalMessage] = useState('');
-	// redux handle modal
+
+	// redux
 	const isOpenToggleModalLogin = useAppSelector(selectIsToggleModalLogin);
 	const dispatch = useAppDispatch();
+
+	// Close modal function
+	const closeModal = useCallback(() => {
+		dispatch(closeModalLogin());
+	}, [dispatch]);
+
 	// handle authentication Email firebase
 	const handleGoogleLogin = () => {
 		dispatch(loginWithGoogle());
 	};
-	// handle click out side
+
+	// click outside modal
 	const loginInnerRef = useRef<HTMLDivElement | null>(null);
-	const closeModalIfOutsideClick = (event: MouseEvent) => {
-		if (loginInnerRef.current && !loginInnerRef.current.contains(event.target as Node)) {
-			closeModal();
-		}
-	};
+	const closeModalIfOutsideClick = useCallback(
+		(event: MouseEvent) => {
+			if (loginInnerRef.current && !loginInnerRef.current.contains(event.target as Node)) {
+				closeModal();
+			}
+		},
+		[loginInnerRef, closeModal],
+	);
 
 	useEffect(() => {
 		if (isOpenToggleModalLogin) {
@@ -62,22 +73,24 @@ const Login = () => {
 		return () => {
 			document.removeEventListener('click', closeModalIfOutsideClick);
 		};
-	}, [isOpenToggleModalLogin]);
+	}, [isOpenToggleModalLogin, closeModalIfOutsideClick]);
 
-	// handle hidden scroll body
+	// hidden scroll
 	useNoScrollBody(isOpenToggleModalLogin);
-	// handle close modal
+
+	// auto close notification
 	useEffect(() => {
 		let timer: ReturnType<typeof setTimeout> | undefined;
 		if (modalVisible) {
 			timer = setTimeout(() => {
 				setModalVisible(false);
-			}, 3000); // Close modal after 2 seconds
+			}, 3000);
 		}
 		return () => {
 			if (timer) clearTimeout(timer);
 		};
 	}, [modalVisible]);
+
 	const {
 		control,
 		handleSubmit,
@@ -85,22 +98,20 @@ const Login = () => {
 	} = useForm<ILoginProps>({
 		resolver: yupResolver(schema),
 	});
-	const closeModal = () => {
-		dispatch(closeModalLogin());
-	};
-	// handle modal toggle
+
 	const handleOpenModalRegister = async () => {
 		await dispatch(closeModalLogin());
 		dispatch(openModalRegister());
 	};
-	// Handle form submission here
+
 	const { mutate: MUTATION_LOGIN, isLoading: LOADING_LOGIN } = useLoginMutation();
+
 	const onLoginSubmit = async (data: any) => {
 		MUTATION_LOGIN(data, {
 			onSuccess: async (data) => {
 				try {
-					await setModalVisible(true);
-					await setModalMessage('Successfully logged in!');
+					setModalVisible(true);
+					setModalMessage('Successfully logged in!');
 					const inforUser = data.data;
 					dispatch(loginEmailSuccess(inforUser));
 					dispatch(closeModalLogin());
@@ -114,6 +125,7 @@ const Login = () => {
 			},
 		});
 	};
+
 	return (
 		<section className={`login-wrapper _overlay ${isOpenToggleModalLogin ? '-show' : ''}`}>
 			{/* Modal Notification */}
@@ -122,7 +134,7 @@ const Login = () => {
 				message={modalMessage}
 				onClose={() => setModalVisible(false)}
 			/>
-			{/* description */}
+
 			<div
 				className="login-inner _custom-scrollbar"
 				ref={loginInnerRef}
@@ -136,9 +148,9 @@ const Login = () => {
 						<p>2H3T&#39;s</p>REDTAB™
 					</h4>
 					<p className="content">Welcome back!</p>
-					<p className="description ">Log in for faster checkout and see all your benefits.</p>
+					<p className="description">Log in for faster checkout and see all your benefits.</p>
 				</div>
-				{/* form login */}
+
 				<form
 					className="form-login-inner"
 					onSubmit={handleSubmit(onLoginSubmit)}
@@ -172,10 +184,11 @@ const Login = () => {
 						Create a new account
 					</button>
 				</form>
-				{/* login with google */}
+
 				<div className="separator">
 					<div className="text">OR</div>
 				</div>
+
 				<Button
 					type="submit"
 					className="btn-login-google"
@@ -183,6 +196,7 @@ const Login = () => {
 				>
 					Log In With Google
 				</Button>
+
 				<div className="notice">
 					By creating an account, I agree to the <p>LS&Co. Terms of Use</p> and the
 					<p> Terms and Conditions.</p> LS&Co. <p>Privacy Policy and</p>

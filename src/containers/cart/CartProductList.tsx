@@ -12,7 +12,7 @@ import { useAppDispatch, useAppSelector } from '@/redux/hook';
 // icons
 import ButtonLink from '@/compound/demo-button/button-link/ButtonLink';
 import { MdKeyboardArrowDown } from '../../compound/icons/index';
-
+import { useCallback } from 'react';
 const CartProductList = () => {
 	// Use useDispatch and useSelector to get dispatch and state from Redux
 	const dispatch = useAppDispatch(); // Get dispatch from Redux
@@ -34,10 +34,6 @@ const CartProductList = () => {
 	};
 
 	// Function to close dropdown
-	const closeShowModalQuantity = (id: string, size: string) => {
-		const newShowDropdowns = { ...showDropdowns, [`${id}-${size}`]: false }; // Set dropdown value to false
-		setShowDropdowns(newShowDropdowns); // Update state to hide dropdown
-	};
 
 	// Function to handle changing item quantity
 	const handleQuantityChange = (id: string, size: string, quantity: number) => {
@@ -47,7 +43,13 @@ const CartProductList = () => {
 	};
 
 	// Function to calculate total priceS
-
+	const closeShowModalQuantity = useCallback(
+		(id: string, size: string) => {
+			const newShowDropdowns = { ...showDropdowns, [`${id}-${size}`]: false };
+			setShowDropdowns(newShowDropdowns);
+		},
+		[showDropdowns],
+	);
 	// Effect to close dropdown when clicking outside
 	useEffect(() => {
 		const closeDropdown = (event: MouseEvent) => {
@@ -55,15 +57,15 @@ const CartProductList = () => {
 				const ref = dropdownRefs.current[key];
 				if (ref && !ref.contains(event.target as Node)) {
 					const [itemId, size] = key.split('-');
-					closeShowModalQuantity(itemId, size); // Close corresponding dropdown
+					closeShowModalQuantity(itemId, size);
 				}
 			});
 		};
-		document.addEventListener('mousedown', closeDropdown); // Listen for mouse click event
+		document.addEventListener('mousedown', closeDropdown);
 		return () => {
-			document.removeEventListener('mousedown', closeDropdown); // Remove event listener when component unmounts
+			document.removeEventListener('mousedown', closeDropdown);
 		};
-	}, []);
+	}, [closeShowModalQuantity]);
 
 	return (
 		<div className="bag-cart-box">

@@ -1,6 +1,7 @@
 'use client';
+
 // base
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 // components
 import Button from '@/compound/demo-button/button/Button';
 import FormInput from '@/compound/formInput/FormInput';
@@ -18,6 +19,7 @@ import useNoScrollBody from '@/custom-hook/useNoScrollBody';
 import { useRegisterMutation } from '@/query/authentication/authentication';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+
 const schema = yup.object().shape({
 	firstName: yup.string().required('First name is required'),
 	lastName: yup.string().required('Last name is required'),
@@ -26,10 +28,10 @@ const schema = yup.object().shape({
 });
 
 interface IRegisterProps {
-	firstName?: string;
-	lastName?: string;
-	email?: string;
-	password?: string;
+	firstName: string;
+	lastName: string;
+	email: string;
+	password: string;
 }
 
 const Register = () => {
@@ -38,12 +40,20 @@ const Register = () => {
 	const dispatch = useAppDispatch();
 	const registerInnerRef = useRef<HTMLDivElement | null>(null);
 
+	// handle close modal
+	const closeModal = useCallback(() => {
+		dispatch(closeModalRegister());
+	}, [dispatch]);
+
 	// handle click out side
-	const closeModalIfOutsideClick = (event: MouseEvent) => {
-		if (registerInnerRef.current && !registerInnerRef.current.contains(event.target as Node)) {
-			closeModal();
-		}
-	};
+	const closeModalIfOutsideClick = useCallback(
+		(event: MouseEvent) => {
+			if (registerInnerRef.current && !registerInnerRef.current.contains(event.target as Node)) {
+				closeModal();
+			}
+		},
+		[closeModal],
+	);
 
 	useEffect(() => {
 		if (isOpenToggleModalOpen) {
@@ -55,7 +65,7 @@ const Register = () => {
 		return () => {
 			document.removeEventListener('click', closeModalIfOutsideClick);
 		};
-	}, [isOpenToggleModalOpen]);
+	}, [isOpenToggleModalOpen, closeModalIfOutsideClick]);
 
 	// handle hidden scroll body
 	useNoScrollBody(isOpenToggleModalOpen);
@@ -65,7 +75,7 @@ const Register = () => {
 		control,
 		handleSubmit,
 		formState: { errors },
-	} = useForm({
+	} = useForm<IRegisterProps>({
 		resolver: yupResolver(schema),
 	});
 
@@ -74,18 +84,17 @@ const Register = () => {
 		dispatch(openModalLogin());
 	};
 
-	const closeModal = () => {
-		dispatch(closeModalRegister());
-	};
 	// handle register
 	const { mutate: MUTATION_REGISTER, isLoading: LOADING_REGISTER } = useRegisterMutation();
-	const onSubmit = async (fromData: any) => {
+
+	const onSubmit = async (formData: any) => {
 		try {
-			MUTATION_REGISTER(fromData);
+			MUTATION_REGISTER(formData); // gọi đúng kiểu
 		} catch (error) {
 			console.error('Register error:', error);
 		}
 	};
+
 	return (
 		<section className={`register-wrapper _overlay ${isOpenToggleModalOpen ? '-show' : ''}`}>
 			<div
@@ -140,6 +149,7 @@ const Register = () => {
 						type="password"
 						errors={errors}
 					/>
+
 					<div className="alert">
 						Passwords must be at least 8 characters and cant be easy to guess - commonly used or risky
 						passwords are not permitted.
@@ -149,6 +159,7 @@ const Register = () => {
 						<p>Red Tab Member Program Terms and Conditions.</p> I have read the LS&Co. Privacy Policy and{' '}
 						<p>Financial Incentive Notice and offer terms.</p>
 					</div>
+
 					<Button
 						type="submit"
 						className="btn-submit"

@@ -28,7 +28,7 @@ import CustomImage from '@/compound/customImage/CustomImage';
 import useNoScrollBody from '@/custom-hook/useNoScrollBody';
 import { useUserDetailQuery } from '@/query/user/handleApiUser';
 import Logo from '@/compound/logo/Logo';
-
+import { useCallback } from 'react';
 interface IPropsSale {
 	id?: number;
 	label?: string;
@@ -52,11 +52,11 @@ const HeaderMobile = ({ handleRedirectToFavoritePage }: IPropsSale) => {
 		setOpenNav(false);
 	};
 
-	const handleClickOutside = (event: MouseEvent) => {
+	const handleClickOutside = useCallback((event: MouseEvent) => {
 		if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
 			handleCloseNav();
 		}
-	};
+	}, []);
 
 	useEffect(() => {
 		if (openNav) {
@@ -64,12 +64,10 @@ const HeaderMobile = ({ handleRedirectToFavoritePage }: IPropsSale) => {
 		} else {
 			document.removeEventListener('mousedown', handleClickOutside);
 		}
-
 		return () => {
 			document.removeEventListener('mousedown', handleClickOutside);
 		};
-	}, [openNav]);
-	// handle hidden scroll body
+	}, [openNav, handleClickOutside]);
 
 	useNoScrollBody(openNav);
 	const handleLogOutGoogle = () => dispatch(logoutGoogle());

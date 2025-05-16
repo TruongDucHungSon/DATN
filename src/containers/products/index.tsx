@@ -59,7 +59,7 @@ const PageProducts = () => {
 		if (debouncedName) {
 			router.push(`?name=${debouncedName}`);
 		}
-	}, [debouncedName]);
+	}, [debouncedName, router]);
 
 	const totalPages = productsData ? productsData?.totalPages : 0;
 	const DATA_PRODUCTS = DATA_PRODUCT_FILTER || productsData?.products;

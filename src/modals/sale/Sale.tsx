@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import { selectIsToggleModalSale } from '@/redux/modal/selector';
 import { closeModalSale } from '@/redux/modal/slice';
 import { Product } from '@/utils/type';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { GrFormClose, VscBell } from '../../compound/icons/index';
 import ProductSale from './ProductSale';
 
@@ -21,18 +21,20 @@ const Sale = () => {
 	const HOURS_SETINTERVAL = 8 * 60 * 60 * 1000;
 	const [productsToShow, setProductsToShow] = useState<Product[]>([]);
 
-	const updateProductsToShow = () => {
+	const updateProductsToShow = useCallback(() => {
 		if (DATA_PRODUCTS?.products) {
 			setProductsToShow(getRandomSample(DATA_PRODUCTS.products, 8));
 		}
-	};
+	}, [DATA_PRODUCTS]);
 
-	const closeModalIfOutsideClick = (event: MouseEvent) => {
-		if (saleInnerRef.current && !saleInnerRef.current.contains(event.target as Node)) {
-			dispatch(closeModalSale());
-		}
-	};
-
+	const closeModalIfOutsideClick = useCallback(
+		(event: MouseEvent) => {
+			if (saleInnerRef.current && !saleInnerRef.current.contains(event.target as Node)) {
+				dispatch(closeModalSale());
+			}
+		},
+		[dispatch],
+	);
 	useEffect(() => {
 		if (IsToggleModalSale) {
 			document.addEventListener('click', closeModalIfOutsideClick);
@@ -43,17 +45,13 @@ const Sale = () => {
 		return () => {
 			document.removeEventListener('click', closeModalIfOutsideClick);
 		};
-	}, [IsToggleModalSale]);
+	}, [IsToggleModalSale, closeModalIfOutsideClick]);
 
 	useEffect(() => {
-		// Initial update
 		updateProductsToShow();
-
-		// Set up interval to update every 8 hours (8 hours * 60 minutes * 60 seconds * 1000 milliseconds)
 		const interval = setInterval(updateProductsToShow, HOURS_SETINTERVAL);
-
 		return () => clearInterval(interval);
-	}, [DATA_PRODUCTS]);
+	}, [updateProductsToShow, HOURS_SETINTERVAL]);
 
 	return (
 		<section className="main-sale">
