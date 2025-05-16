@@ -12,7 +12,6 @@
 	"dependencies": {
 		"@hookform/resolvers": "^3.3.2",
 		"@reduxjs/toolkit": "^1.9.7",
-		"@types/firebase": "^3.2.1",
 		"@types/js-cookie": "^3.0.5",
 		"@types/lodash": "^4.14.199",
 		"@types/swiper": "^6.0.0",
