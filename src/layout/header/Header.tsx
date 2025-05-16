@@ -3,8 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Fragment, useEffect, useState } from 'react';
-// images
-import LogoSrc from '../../assets/images/logo/logoSpeedTour.jpg';
+
 // Swiper
 import { Autoplay, Navigation } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
