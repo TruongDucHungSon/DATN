@@ -4,7 +4,7 @@ import axios, { AxiosInstance } from 'axios';
 import { isEmpty } from 'lodash';
 
 const publicRequest: AxiosInstance = axios.create({
-	baseURL: 'https://ecommerce-api-mcqr.onrender.com',
+	baseURL: 'https://ecommerce-api-1-jkdw.onrender.com',
 	timeout: 10000,
 	headers: {
 		Accept: 'application/json',

@@ -42,7 +42,7 @@ const BagCart = () => {
 	const calculateEstimatedTotal = () => {
 		let total = 0;
 		itemBagCart.forEach((item: Product) => {
-			total += (item.discountPrice || 0) * (item.quantity || 1);
+			total += (item.price || 0) * (item.quantity || 1);
 		});
 		return total.toFixed(2);
 	};
@@ -127,9 +127,7 @@ const BagCart = () => {
 										</div>
 										<div className="sub-title">
 											Subtotal:{' '}
-											<span>
-												${((item.discountPrice || 0) * (item.quantity || 1)).toFixed(2)}
-											</span>
+											<span>${((item.price || 0) * (item.quantity || 1)).toFixed(2)}</span>
 										</div>
 									</div>
 								</div>

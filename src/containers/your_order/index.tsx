@@ -14,6 +14,8 @@ import { useQueryClient } from 'react-query';
 import { CartItem, Order } from '@/utils/type';
 // lodash
 import { map } from 'lodash';
+// axios
+import axios from 'axios';
 
 const YourOrder = () => {
 	const queryClient = useQueryClient();
@@ -24,12 +26,28 @@ const YourOrder = () => {
 	// Ensure inforUser is defined and has an _id property
 	const id_User = inforUser?._id;
 
-	// Filter orders by user ID, ensure DATA_ORDER is an array
+	// Filter orders by user ID
 	const filterOrders = (orders: Order[]): Order[] => {
 		return orders.filter((order) => order.userId === id_User);
 	};
 
 	const FILTERED_ORDERS = Array.isArray(DATA_ORDER) ? filterOrders(DATA_ORDER) : [];
+
+	// 🟣 🔥 function thanh toán PayOS
+	const handlePayOSPayment = async (orderId: string, amount: number) => {
+		try {
+			const res = await axios.post('https://ecommerce-api-1-jkdw.onrender.com/order/payos/create-payment', {
+				orderId,
+				amount: Math.floor(amount), // ✅ chuyển thành số nguyên
+			});
+
+			if (res.data?.checkoutUrl) {
+				window.location.href = res.data.checkoutUrl;
+			}
+		} catch (err) {
+			console.error('PayOS error:', err);
+		}
+	};
 
 	return (
 		<main className="container">
@@ -87,6 +105,19 @@ const YourOrder = () => {
 									<p>
 										Total: <span>${order.total}</span>
 									</p>
+
+									{/* 🔥 Nút thanh toán PayOS */}
+									{order.status !== 'Paid' && (
+										<button
+											className="btn btn-primary mt-2"
+											onClick={
+												() => handlePayOSPayment(order._id, Math.floor(order.total)) // đảm bảo số nguyên
+											}
+										>
+											Pay via PayOS
+										</button>
+									)}
+
 									<p>
 										Order date: <span>{new Date(order.createdAt).toLocaleDateString('en-GB')}</span>
 									</p>

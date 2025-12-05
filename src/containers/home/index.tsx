@@ -49,7 +49,18 @@ export default function Home() {
 				loading={LOADING_PRODUCT1}
 				error={ERROR_PRODUCT1}
 			/>
-			<Discovers />
+			<SectionProducts
+				title="STYLES YOU MAY LIKE"
+				productList={DATA_PRODUCTS1}
+				loading={LOADING_PRODUCT1}
+				error={ERROR_PRODUCT1}
+			/>
+			<SectionProducts
+				title="STYLES YOU MAY LIKE"
+				productList={DATA_PRODUCTS1}
+				loading={LOADING_PRODUCT1}
+				error={ERROR_PRODUCT1}
+			/>
 			<SectionProducts
 				title="BESTSELLERS WE RECOMMEND"
 				productList={DATA_PRODUCTS2}

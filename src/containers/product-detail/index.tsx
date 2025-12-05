@@ -215,7 +215,7 @@ const PageProductDetail = () => {
 	if (!DATA_PRODUCT_DETAIL) {
 		return <div>Product not found</div>;
 	}
-	const discountedPrice = DATA_PRODUCT_DETAIL.price * (1 - DATA_PRODUCT_DETAIL.discount / 100);
+	const discountedPrice = DATA_PRODUCT_DETAIL.price;
 
 	return (
 		<main className="site-detail ">

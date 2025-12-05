@@ -112,7 +112,7 @@ const CartProductList = () => {
 										</Link>
 									</div>
 									<p className="color">Luxor Heat Light Wash</p>
-									<p className="price">${item.discountPrice.toFixed(2)}</p>
+									<p className="price">${item.price.toFixed(2)}</p>
 									<div className="infor">
 										<div className="size">{item.size}</div>
 										<button
@@ -155,9 +155,7 @@ const CartProductList = () => {
 									</div>
 									<div className="total">
 										Total:
-										<span className="price">
-											${(item.discountPrice * item.quantity).toFixed(2)}
-										</span>
+										<span className="price">${(item.price * item.quantity).toFixed(2)}</span>
 									</div>
 								</div>
 							</div>
